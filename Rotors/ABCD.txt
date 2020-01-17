@@ -1,0 +1,7 @@
+5 1
+B C D A
+A B C D
+A B C D
+A C B D
+A C D B
+D C B A

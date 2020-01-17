@@ -1,0 +1,7 @@
+5 1
+O E I A Y U
+E Y O I U A
+Y A I E U O
+O U E I Y A
+E O U I Y A
+Y U O I E A

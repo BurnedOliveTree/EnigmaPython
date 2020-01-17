@@ -1,0 +1,7 @@
+5 1
+B e f C d A
+A B C d e f
+C f d A e B
+A B C d e f
+f d B e A C
+B A f e d C
