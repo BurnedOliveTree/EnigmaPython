@@ -130,7 +130,6 @@ class Initiate():
             stdscr.addstr(3, 0, "input from keyboard:")
             stdscr.addstr(4, 0, raw_text)
             input_key = stdscr.getkey()
-                # czy powinienem zrobic tu obsluge backspace czy to przesada
             cypher, unknown, raw_text = Enigma.encrypt_key(markM3, input_key, cypher, raw_text)
             if unknown:
                 curses.beep()
