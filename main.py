@@ -9,7 +9,7 @@ sys.tracebacklimit = 0
 
 class Initiate():
     def select_name(stdscr, y, standard, path):
-        # general function to let user type in the names of the config files
+        '''general function to let user type in the names of the config files'''
         input_key, input_name = 'A', ''
         while input_key != '\n':
             input_key = stdscr.getkey()
@@ -32,7 +32,7 @@ class Initiate():
         return input_name, if_file
 
     def open_alphabet(file_name):
-        # transforms a file containg alphabet into a list
+        '''transforms a file containg alphabet into a list'''
         with open(file_name, "r") as file:
             temp_list = [line.rstrip() for line in file]
             alphabet = []
@@ -42,7 +42,7 @@ class Initiate():
         return alphabet
 
     def create_alphabet(file_name, temp):
-        # creates an alphabet from a file or a user given one
+        '''creates an alphabet from a file or a user given one'''
         if temp:
             alphabet = Initiate.open_alphabet(file_name)
             file_name = file_name[10:]
@@ -55,7 +55,7 @@ class Initiate():
         return "Rotors/" + file_name, alphabet
 
     def create_rotors(file_name, alphabet, rotors):
-        # creates a rotor config file from variables created in choose_rotors
+        '''creates a rotor config file from variables created in choose_rotors'''
         rotors = int(rotors)
         with open(file_name, "w+") as out_file:
             out_file.write(str(rotors)+" 1\n")
@@ -65,7 +65,7 @@ class Initiate():
             out_file.write(' '.join(alphabet[::-1]))
 
     def choose_rotors(stdscr):
-        # lets user create or choose variables to create a rotor config file
+        '''lets user create or choose variables to create a rotor config file'''
         Initiate.clean_choose(stdscr, "Alphabets", "alphabet", "the alphabet")
         file_name, temp = Initiate.select_name(stdscr, 1, "", "Alphabets/")
         file_name, alphabet = Initiate.create_alphabet(file_name, temp)
@@ -76,7 +76,7 @@ class Initiate():
         return file_name
 
     def create_select(file_select):
-        # creates a select config file from user input
+        '''creates a select config file from user input'''
         temp = file_select.split()
         rotors = (len(temp) - 1) // 2
         with open("Select/temporary.txt", "w+") as out_file:
@@ -88,7 +88,7 @@ class Initiate():
         return "Select/temporary.txt"
 
     def clean_choose(stdscr, path, info1, info2):
-        # a method cleanly showing all the required information in a "choose" methods to a user
+        '''a method cleanly showing all the required information in a "choose" methods to a user'''
         stdscr.clear()
         stdscr.addstr(3, 0, "Press 'Enter' to confirm current typed-in text as a name of the file")
         stdscr.addstr(4, 0, "(leave blank for the default file name and do not forget the extension)")
@@ -100,7 +100,7 @@ class Initiate():
         stdscr.addstr(0, 31, f"{' in ' if len(path) > 0 else ''}{path} containing "+info2+"\n")
 
     def choose_config(stdscr):
-        # get file_name for Enigma configuration file from user
+        '''get file_name for Enigma configuration file from user'''
         Initiate.clean_choose(stdscr, "Rotors", "file from chosen alphabet", "rotors and deflectors")
         file_rotors, temp = Initiate.select_name(stdscr, 1, "default.txt", "Rotors/")
         if not temp:
@@ -112,13 +112,13 @@ class Initiate():
         return file_rotors, file_select
 
     def choose_file(stdscr):
-        # get file_name for Enigma configuration file from user
+        '''get file_name for Enigma configuration file from user'''
         Initiate.clean_choose(stdscr, "", "", "text to decrypt")
         file_name, _ = Initiate.select_name(stdscr, 1, "standard", "")
         return file_name
 
     def encrypt_input(stdscr, markM3):
-        # initiates Enigma object from given file_config and runs the simulation
+        '''initiates Enigma object from given file_config and runs the simulation'''
         input_key, raw_text, cypher = 'A', '', ''
         stdscr.clear()
         # stdscr.addstr(curses.LINES-1, 0, f"Window size: ({curses.COLS};{curses.LINES})")
@@ -139,7 +139,7 @@ class Initiate():
         return cypher
 
     def create_file_info(stdscr, encrypted_text, unknown):
-        # informs about succesful creation of file in create_file
+        '''informs about succesful creation of file in create_file'''
         input_key = 'A'
         while ord(input_key) != 27:
             stdscr.clear()
@@ -152,7 +152,7 @@ class Initiate():
             input_key = stdscr.getkey()
 
     def wrapped_functions(stdscr):
-        # the actual main function of the program - launches all the necessary smaller functions
+        '''the actual main function of the program - launches all the necessary smaller functions'''
         # initiates Enigma object from given file_names
         markM3 = Enigma(*Create.open_config(*Initiate.choose_config(stdscr)))
         file_name = Initiate.choose_file(stdscr)
@@ -165,7 +165,7 @@ class Initiate():
 
 
 def main():
-    # initiating curses window and all required functions for it
+    '''initiating curses window and all required functions for it'''
     stdscr = curses.initscr()   # initiate screen
     curses.noecho()   # display keys only when needed
     curses.cbreak()   # keys react without needing Enter

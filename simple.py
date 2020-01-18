@@ -13,14 +13,14 @@ class Enigma:
 
     @staticmethod
     def get_name(n):
-        # names the Enigma object
+        '''names the Enigma object'''
         name = "M3"
         if n != 3:
             name += " based"
         return name
 
     def add_shifts(self):
-        # moves the latter Rotors if required
+        '''moves the latter Rotors if required'''
         temp = True
         for i in range(self.rotors_no-1):
             if temp:
@@ -29,7 +29,7 @@ class Enigma:
             self.rotors[self.rotors_no-1].shift_add = 0
 
     def encrypt_sign(self, sign):
-        # encrypts one given sign - the main functionality of this program
+        '''encrypts one given sign - the main functionality of this program'''
         for i in range(self.rotors_no):
             sign = Rotor.encrypt_sign(self.rotors[i], sign)
         sign = Deflector.encrypt_sign(self.deflector, sign)
@@ -39,7 +39,7 @@ class Enigma:
         return sign
 
     def encrypt_key(self, sign, encrypted_text, raw_text=""):
-        # encrypts a single sign if conditions are met
+        '''encrypts a single sign if conditions are met'''
         unknown = False
         # converts unsupported lowercases to an uppercase
         if sign.islower() and sign not in self.lowercase:
@@ -64,7 +64,7 @@ class Enigma:
         return encrypted_text, unknown, raw_text
 
     def encrypt_file(self, file_name):
-        # encrypts a given file_name using a given Enigma object
+        '''encrypts a given file_name using a given Enigma object'''
         cypher, if_unknown = '', 0
         with open(file_name, "r") as file:
             temp_list = [line.rstrip() for line in file]
@@ -78,7 +78,7 @@ class Enigma:
 
     @staticmethod
     def create_file(cypher):
-        # makes a file "output.txt" from the encrypted text
+        '''makes a file "output.txt" from the encrypted text'''
         with open("output.txt", "w+") as out_file:
             out_file.write(cypher)
 
@@ -97,21 +97,23 @@ class Rotor:
         self.shift_add = 0
 
     def encrypt_sign(self, sign):
-        # encrypts one given sign - the main functionality of this program
+        '''encrypts one given sign - the main functionality of this program'''
         for j in range(self.length):
             if sign == self.alphabet[j]:
                 return self.letters[(j+self.get_shift()) % self.length]
 
     def decrypt_sign(self, sign):
-        # encrypts one given sign - the main functionality of this program
+        '''decrypts one given sign - the main functionality of this program'''
         for j in range(self.length):
             if sign == self.letters[j]:
                 return self.alphabet[(j-self.get_shift()) % self.length]
 
     def get_shift(self):
+        '''returns a combined shift valeu'''
         return self.shift_add + self.shift_beg
 
     def add_shift(self):
+        '''moves this Rotor by one and returns true if the next Rotor should move'''
         self.shift_add += 1
         if self.shift_add == self.length:
             self.shift_add = 0
@@ -120,7 +122,7 @@ class Rotor:
 
     @staticmethod
     def get_name(n, file_rotors):
-        # names the Rotor object
+        '''names the Rotor object'''
         if file_rotors == "Rotors/default.txt":
             rotor_names = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']
             name = rotor_names[n-1]
@@ -150,13 +152,14 @@ class Deflector(Rotor):
         self.length = len(self.alphabet)
 
     def encrypt_sign(self, sign):
+        '''encrypts one given sign - the main functionality of this program'''
         for i in range(self.length):
             if sign == self.alphabet[i]:
                 return self.letters[i]
 
     @staticmethod
     def get_name(n, file_rotors):
-        # names the Deflector object
+        '''names the Deflector object'''
         name = Rotor.get_name(n, file_rotors)
         if file_rotors == "Rotors/default.txt":
             deflector_names = ['UKW B', 'UKW C']
@@ -169,11 +172,11 @@ class Deflector(Rotor):
 
 class Create():
     def split_list(a_type, a_list):
-        # splits a string into a list of signs of given type
+        '''splits a string into a list of signs of given type'''
         return list(map(a_type, a_list.split()))
 
     def check_case(letters):
-        # returns two lists of the uppercase and the lowercase letters used on the rotors
+        '''returns two lists of the uppercase and the lowercase letters used on the rotors'''
         used_uppercase, used_lowercase = [], []
         for i in range(len(letters)):
             if letters[i].isupper():
@@ -183,7 +186,7 @@ class Create():
         return used_uppercase, used_lowercase
 
     def raise_select(file, rotors_select, rotors_amount, deflectors_amount, desired_amount):
-        # raises all the Exceptions that can occur in rotors config file
+        '''raises all the Exceptions that can occur in rotors config file'''
         if rotors_amount < desired_amount:
             raise Exception(f"There are less rotors in {file} ({rotors_amount}) than the requested amount ({desired_amount})")
         if max(rotors_select) > rotors_amount:
@@ -192,7 +195,7 @@ class Create():
             raise Exception(f"The requested number of deflector ({rotors_select[desired_amount]}) is higher than the given amount of them ({deflectors_amount})")
 
     def raise_rotors(rotors_amount, rotors_list, deflector, letters_list):
-        # raises all the Exceptions that can occur in select config file
+        '''raises all the Exceptions that can occur in select config file'''
         if len(deflector.letters) % 2 != 0:
             raise Exception(f"The number of signs in the deflector {deflector.name} ({len(deflector.letters)}) is not even")
         for i in range(rotors_amount):
@@ -208,7 +211,7 @@ class Create():
                         raise Exception(f"The {deflector.name} deflector is not properly created (it should swap two signs with eachother)")
 
     def open_config(file_rotors, file_select):
-        # transforms configuration files into variables readable by Enigma class
+        '''transforms configuration files into variables readable by Enigma class'''
         with open(file_select, "r") as file:
             select = [Create.split_list(int, line.rstrip()) for line in file]
         with open(file_rotors, "r") as file:
@@ -231,8 +234,8 @@ class Create():
 
 
 def main():
-    # the main of the program launching the Enigma without libraries or inputs,
-    # encrypting the text in output.txt using default settings
+    '''the main function of the program launching the Enigma without libraries or inputs,
+    encrypting the text in output.txt using default settings'''
     markM3 = Enigma(*Create.open_config("Rotors/default.txt", "Select/default.txt"))
     encrypted_text, unknown = Enigma.encrypt_file(markM3, "output.txt")
     Enigma.create_file(encrypted_text)

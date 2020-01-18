@@ -8,7 +8,7 @@ sys.tracebacklimit = 0
 
 class InitiateRaw():
     def select_name(standard, path):
-        # general function to let user type in the names of the config files
+        '''general function to let user type in the names of the config files'''
         input_name = input()
         if input_name == '':
             input_name = standard
@@ -19,7 +19,7 @@ class InitiateRaw():
         return input_name, if_file
 
     def choose_rotors():
-        # lets user create or choose variables to create a rotor config file
+        '''lets user create or choose variables to create a rotor config file'''
         InitiateRaw.clean_choose("Alphabets", "alphabet", "the alphabet")
         file_name, temp = InitiateRaw.select_name("", "Alphabets/")
         file_name, alphabet = Initiate.create_alphabet(file_name, temp)
@@ -29,7 +29,7 @@ class InitiateRaw():
         return file_name
 
     def clean_choose(path, info1, info2):
-        # a method cleanly showing all the required information in a "choose" methods to a user
+        '''a method cleanly showing all the required information in a "choose" methods to a user'''
         os.system('cls' if os.name == 'nt' else 'clear')
         print("Please enter the name of a file", end='')
         print(f"{' in ' if len(path) > 0 else ''}{path} containing "+info2+"\n")
@@ -40,7 +40,7 @@ class InitiateRaw():
             print(f"Avaible {path}: {', '.join(os.popen(f'ls {path}').read().split())}\n")
 
     def choose_config():
-        # get file_name for Enigma configuration file from user
+        '''get file_name for Enigma configuration file from user'''
         InitiateRaw.clean_choose("Rotors", "file from chosen alphabet", "rotors and deflectors")
         file_rotors, temp = InitiateRaw.select_name("default.txt", "Rotors/")
         if not temp:
@@ -52,13 +52,13 @@ class InitiateRaw():
         return file_rotors, file_select
 
     def choose_file():
-        # get file_name for Enigma configuration file from user
+        '''get file_name for Enigma configuration file from user'''
         InitiateRaw.clean_choose("", "", "text to decrypt")
         file_name, _ = InitiateRaw.select_name("standard", "")
         return file_name
 
     def encrypt_input(markM3):
-        # initiates Enigma object from given file_config and runs the simulation
+        '''initiates Enigma object from given file_config and runs the simulation'''
         cypher, if_unknown = '', False
         os.system('cls' if os.name == 'nt' else 'clear')
         print(Enigma.__str__(markM3)+'\n')
@@ -71,7 +71,7 @@ class InitiateRaw():
         return cypher, if_unknown
 
     def create_file_info(encrypted_text, unknown):
-        # informs about succesful creation of file in create_file
+        '''informs about succesful creation of file in create_file'''
         os.system('cls' if os.name == 'nt' else 'clear')
         print("File containing encrypted text succesfully created")
         if unknown:
@@ -80,7 +80,7 @@ class InitiateRaw():
         print("\nSaved text:\n"+encrypted_text)
 
     def main():
-        # launches all the necessary smaller functions
+        '''launches all the necessary smaller functions'''
         # initiates Enigma object from given file_names
         markM3 = Enigma(*Create.open_config(*InitiateRaw.choose_config()))
         file_name = InitiateRaw.choose_file()
