@@ -57,18 +57,12 @@ class InitiateRaw():
         file_name, _ = InitiateRaw.select_name("standard", "")
         return file_name
 
-    def encrypt_input(markM3):
-        '''initiates Enigma object from given file_config and runs the simulation'''
-        cypher, if_unknown = '', False
+    def input_text(markM3):
+        '''gets desired input text from user'''
         os.system('cls' if os.name == 'nt' else 'clear')
         print(Enigma.__str__(markM3)+'\n')
         raw_text = input("input from keyboard:\n")
-        unknown = False
-        for i in range(len(raw_text)):
-            cypher, unknown, _ = Enigma.encrypt_key(markM3, raw_text[i], cypher)
-            if unknown:
-                if_unknown = True
-        return cypher, if_unknown
+        return raw_text
 
     def create_file_info(encrypted_text, unknown):
         '''informs about succesful creation of file in create_file'''
@@ -85,9 +79,10 @@ class InitiateRaw():
         markM3 = Enigma(*Create.open_config(*InitiateRaw.choose_config()))
         file_name = InitiateRaw.choose_file()
         if file_name == "standard":
-            encrypted_text, unknown = InitiateRaw.encrypt_input(markM3)
+            raw_text = InitiateRaw.input_text(markM3)
         else:
-            encrypted_text, unknown = Enigma.encrypt_file(markM3, file_name)
+            raw_text = Enigma.open_file(file_name)
+        encrypted_text, unknown = Enigma.encrypt_text(markM3, raw_text)
         Enigma.create_file(encrypted_text)
         InitiateRaw.create_file_info(encrypted_text, unknown)
 

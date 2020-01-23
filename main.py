@@ -159,7 +159,8 @@ class Initiate():
         if file_name == "standard":
             encrypted_text, unknown = Initiate.encrypt_input(stdscr, markM3), False
         else:
-            encrypted_text, unknown = Enigma.encrypt_file(markM3, file_name)
+            raw_text = Enigma.open_file(file_name)
+            encrypted_text, unknown = Enigma.encrypt_text(markM3, raw_text)
         Enigma.create_file(encrypted_text)
         Initiate.create_file_info(stdscr, encrypted_text, unknown)
 

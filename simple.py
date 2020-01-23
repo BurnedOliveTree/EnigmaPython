@@ -63,24 +63,28 @@ class Enigma:
             unknown = True
         return encrypted_text, unknown, raw_text
 
-    def encrypt_file(self, file_name):
+    def encrypt_text(self, raw_text):
         '''encrypts a given file_name using a given Enigma object'''
         cypher, if_unknown = '', 0
-        with open(file_name, "r") as file:
-            temp_list = [line.rstrip() for line in file]
-        for line in range(len(temp_list)):
-            for sign in range(len(temp_list[line])):
-                current_sign = temp_list[line][sign]
-                cypher, unknown, _ = Enigma.encrypt_key(self, current_sign, cypher)
-                if unknown:
-                    if_unknown = True
+        for sign in range(len(raw_text)):
+            current_sign = raw_text[sign]
+            cypher, unknown, _ = Enigma.encrypt_key(self, current_sign, cypher)
+            if unknown:
+                if_unknown = True
         return cypher, if_unknown
 
     @staticmethod
-    def create_file(cypher):
-        '''makes a file "output.txt" from the encrypted text'''
-        with open("output.txt", "w+") as out_file:
-            out_file.write(cypher)
+    def open_file(file_name):
+        '''makes a one string from the whole given file'''
+        with open(file_name, "r") as file:
+            raw_file = [line.rstrip() for line in file]
+        return ''.join(raw_file)
+
+    @staticmethod
+    def create_file(text, path=''):
+        '''makes a file "output.txt" from the given text'''
+        with open(path+"output.txt", "w+") as out_file:
+            out_file.write(text)
 
     def __str__(self):
         return f"This {self.name} Enigma emulation uses {', '.join([self.rotors[i].name for i in range(self.rotors_no)])} rotors and the {self.deflector.name} deflector"
@@ -237,7 +241,8 @@ def main():
     '''the main function of the program launching the Enigma without libraries or inputs,
     encrypting the text in output.txt using default settings'''
     markM3 = Enigma(*Create.open_config("Rotors/default.txt", "Select/default.txt"))
-    encrypted_text, unknown = Enigma.encrypt_file(markM3, "output.txt")
+    raw_text = Enigma.open_file("output.txt")
+    encrypted_text, _ = Enigma.encrypt_text(markM3, raw_text)
     Enigma.create_file(encrypted_text)
 
 

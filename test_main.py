@@ -9,13 +9,15 @@ class Tests():
     rotors = "Rotors/default.txt"  # default_rotors
 
     ''' E N I G M A '''
-    def test_encrypt_file(self):
+    def test_encrypt_text(self):
         temp_one = ["ABCDE"]
         markM3 = Enigma(*Create.open_config(Tests.rotors, Tests.select))
         with open(Tests.name, "w+") as out_file:
             out_file.write(temp_one[0])
-        Enigma.encrypt_file(markM3, Tests.name)
-        Enigma.encrypt_file(markM3, Tests.name)
+        raw_text = Enigma.open_file(Tests.name)
+        Enigma.encrypt_text(markM3, raw_text)
+        raw_text = Enigma.open_file(Tests.name)
+        Enigma.encrypt_text(markM3, raw_text)
         with open(Tests.name, "r") as file_select:
             temp_two = [line.rstrip() for line in file_select]
         assert temp_one == temp_two
