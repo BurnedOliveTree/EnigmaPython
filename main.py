@@ -75,16 +75,22 @@ class Initiate():
         Initiate.create_rotors(file_name, alphabet, rotors)
         return file_name
 
-    def create_select(file_select):
+    def create_select(select):
         '''creates a select config file from user input'''
-        temp = file_select.split()
-        rotors = (len(temp) - 1) // 2
+        select, plugs = select.split(), []
+        while not select[-1].isnumeric():
+            plugs.append(select[-1])
+            del select[-1]
+        rotors = (len(select) - 1) // 2
         with open("Select/temporary.txt", "w+") as out_file:
             for i in range(rotors):
-                out_file.write(temp[i]+" ")
-            out_file.write(temp[rotors]+"\n")
+                out_file.write(select[i]+" ")
+            out_file.write(select[rotors]+"\n")
             for i in range(rotors):
-                out_file.write(temp[i+rotors+1]+" ")
+                out_file.write(select[i+rotors+1]+" ")
+            out_file.write("\n")
+            for i in range(len(plugs)):
+                out_file.write(plugs[i]+" ")
         return "Select/temporary.txt"
 
     def clean_choose(stdscr, path, info1, info2):

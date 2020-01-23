@@ -1,7 +1,7 @@
 class Enigma:
     punctuation = [" ", ",", ".", ":", ";", "'", '"', "!", "?"]
 
-    def __init__(self, rotors_list, deflector, letters_list, uppercase, lowercase):
+    def __init__(self, rotors_list, deflector, letters_list, uppercase, lowercase, plug_board):
         self.rotors = rotors_list
         self.deflector = deflector
         self.rotors_no = len(rotors_list)
@@ -10,6 +10,7 @@ class Enigma:
         self.uppercase = uppercase
         self.lowercase = lowercase
         self.name = Enigma.get_name(self.rotors_no)
+        self.plugs = plug_board
 
     @staticmethod
     def get_name(n):
@@ -30,11 +31,15 @@ class Enigma:
 
     def encrypt_sign(self, sign):
         '''encrypts one given sign - the main functionality of this program'''
+        if sign in list(self.plugs.keys()):
+            sign = self.plugs[sign]
         for i in range(self.rotors_no):
             sign = Rotor.encrypt_sign(self.rotors[i], sign)
         sign = Deflector.encrypt_sign(self.deflector, sign)
         for i in range(self.rotors_no-1, -1, -1):
             sign = Rotor.decrypt_sign(self.rotors[i], sign)
+        if sign in list(self.plugs.keys()):
+            sign = self.plugs[sign]
         Enigma.add_shifts(self)
         return sign
 
@@ -189,6 +194,16 @@ class Create():
                 used_lowercase.append(letters[i])
         return used_uppercase, used_lowercase
 
+    def check_plugs(plug_list):
+        plug_amount = len(plug_list)
+        plug_board = {}
+        while plug_amount > 0:
+            plug_board.update({plug_list[0][0]: plug_list[0][1]})
+            plug_board.update({plug_list[0][1]: plug_list[0][0]})
+            del plug_list[0]
+            plug_amount -= 1
+        return plug_board
+
     def raise_select(file, rotors_select, rotors_amount, deflectors_amount, desired_amount):
         '''raises all the Exceptions that can occur in rotors config file'''
         if rotors_amount < desired_amount:
@@ -214,10 +229,31 @@ class Create():
                     if deflector.letters[j] != letters_list[i]:
                         raise Exception(f"The {deflector.name} deflector is not properly created (it should swap two signs with eachother)")
 
+    def raise_plugs(plug_list, alphabet):
+        '''raises all the Exceptions that can occur in select config file for plugs'''
+        added = []
+        for i in range(len(plug_list)):
+            if len(plug_list[i]) != 2:
+                raise Exception(f"There should be 2 adjacent sign in {plug_list[i]} instead of {len(plug_list[i])}")
+            if plug_list[i][0] not in alphabet:
+                raise Exception(f"There sign {plug_list[i][0]} from {plug_list[i]} is not included in your rotors")
+            if plug_list[i][1] not in alphabet:
+                raise Exception(f"There sign {plug_list[i][1]} from {plug_list[i]} is not included in your rotors")
+            if plug_list[i][0] in added:
+                raise Exception(f"The sign {plug_list[i][0]} is present multiple times on your plugboard")
+            if plug_list[i][1] in added:
+                raise Exception(f"The sign {plug_list[i][1]} is present multiple times on your plugboard")
+            added.append(plug_list[i][0])
+            added.append(plug_list[i][1])
+
     def open_config(file_rotors, file_select):
         '''transforms configuration files into variables readable by Enigma class'''
         with open(file_select, "r") as file:
-            select = [Create.split_list(int, line.rstrip()) for line in file]
+            select = [Create.split_list(str, line.rstrip()) for line in file]
+        for i in range(len(select[0])):
+            select[0][i] = int(select[0][i])
+        for i in range(len(select[1])):
+            select[1][i] = int(select[1][i])
         with open(file_rotors, "r") as file:
             rotors = [line.rstrip() for line in file]
         amount_list = Create.split_list(int, rotors[0])
@@ -232,9 +268,14 @@ class Create():
                 str, rotors[amount_list[0]+select[0][amount_list[2]]]))
         letters_list = rotors_list[0].letters.copy()
         letters_list.sort()
+        if len(select) > 2:
+            Create.raise_plugs(select[2], letters_list)
+            plug_board = Create.check_plugs(select[2])
+        else:
+            plug_board = {}
         uppercase, lowercase = Create.check_case(letters_list)
         Create.raise_rotors(amount_list[2], rotors_list, deflector, letters_list)
-        return rotors_list, deflector, letters_list, uppercase, lowercase
+        return rotors_list, deflector, letters_list, uppercase, lowercase, plug_board
 
 
 def main():

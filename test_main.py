@@ -25,6 +25,7 @@ class Tests():
     ''' C R E A T E '''
     def test_split_list(self):
         assert ["A", "B", "C"] == Create.split_list(str, "A B C")
+        assert [1, 2, 3] == Create.split_list(int, "1 2 3")
 
     def test_check_case(self):
         assert ["A", "B", "C"], ["d"] == Create.check_case(["1", "A", "B", "C", "d"])
@@ -38,7 +39,8 @@ class Tests():
             Create.raise_select("name", [3, 2, 3], 5, 1, 3)
 
     def test_raise_rotors(self):
-        rotors_list, deflector, letters_list, uppercase, lowercase = Create.open_config("Rotors/ABCdef.txt", Tests.select)
+        Initiate.create_select("1 3 5 1 0 0 0")
+        rotors_list, deflector, letters_list, uppercase, lowercase, plug_board = Create.open_config("Rotors/ABCdef.txt", "Select/temporary.txt")
         deflector.letters.append("A")
         with pytest.raises(Exception):
             Create.raise_rotors(3, rotors_list, deflector, letters_list)
@@ -55,11 +57,22 @@ class Tests():
         with pytest.raises(Exception):
             Create.raise_rotors(3, rotors_list, deflector, letters_list)
 
+    def test_raise_plugs(self):
+        with pytest.raises(Exception):
+            Create.raise_plugs(["ABCE", "TD"], ["ABCDET"])
+        with pytest.raises(Exception):
+            Create.raise_plugs(["AB", "TD"], ["ABCD"])
+        with pytest.raises(Exception):
+            Create.raise_plugs(["AB", "CD", "AE"], ["ABCDEF"])
+
     def test_open_config(self):
-        rotors_list, deflector, letters_list, uppercase, lowercase = Create.open_config("Rotors/ABCdef.txt", Tests.select)
+        Initiate.create_select("1 3 5 1 0 0 0 AB")
+        rotors_list, deflector, letters_list, uppercase, lowercase, plug_board = Create.open_config("Rotors/ABCdef.txt", "Select/temporary.txt")
         assert letters_list == ['A', 'B', 'C', 'd', 'e', 'f']
         assert uppercase == ['A', 'B', 'C']
         assert lowercase == ['d', 'e', 'f']
+        assert plug_board["A"] == "B"
+        assert plug_board["B"] == "A"
 
     ''' I N I T I A T E '''
     def test_open_alphabet(self):

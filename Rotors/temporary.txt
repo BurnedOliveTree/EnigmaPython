@@ -1,7 +1,7 @@
 5 1
-B C D A
-D A C B
-C A B D
-D A B C
-B D A C
+B C A D
+A D B C
+C B D A
+A B D C
+D B A C
 D C B A
